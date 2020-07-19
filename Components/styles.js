@@ -1,6 +1,6 @@
 import React from 'react'
 import {StyleSheet} from 'react-native'
-import { Header } from 'react-native/Libraries/NewAppScreen'
+
 const styles= StyleSheet.create({
     main_container:{
         flex:1,
@@ -43,6 +43,18 @@ const styles= StyleSheet.create({
         flex: 1,
         flexWrap: 'wrap',
         paddingRight: 5
+    },
+    favorite_container:{
+      alignItems:'center',
+    },
+    favorite_image:{
+      width:40,
+      height:40,
+    },
+    favorite_imageItem:{
+      width:25,
+      height:25,
+      marginRight: 5,
     },
     vote_text:{
         fontWeight: 'bold',

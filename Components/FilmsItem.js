@@ -3,6 +3,17 @@ import { StyleSheet, View, TextInput,Button,FlatList,Text,Image,TouchableOpacity
 import styles from './styles'
 import { getImageFromApi } from '../API/TMDBApi'
 class FilmItem extends React.Component{
+
+  _displayFavoriteImage(){
+    if(this.props.isFilmFavorite){
+      return(
+        <Image
+          style={styles.favorite_imageItem}
+          source={require('../Images/fullHeart.png')}
+        />
+      )
+    }
+  }
     render() {
         //console.log(this.props)
         const {movie, displayDetailForFilm}= this.props
@@ -17,6 +28,7 @@ class FilmItem extends React.Component{
               />
               <View style={styles.content_container}>
                 <View style={styles.header_container}>
+                  {this._displayFavoriteImage()}
                   <Text style={styles.title_text}>{movie.title}</Text>
                   <Text style={styles.vote_text}>{movie.vote_average}</Text>
                 </View>

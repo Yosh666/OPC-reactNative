@@ -31,6 +31,7 @@ function toggleFavorite(state = initialState,action){
                 }
             }
             return nextState || state  
+            //or state si next state n'est pas undefined
             
         
         default:

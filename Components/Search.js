@@ -5,6 +5,7 @@ import styles from './styles'
 import Movie from './FilmsItem'
 import FilmItem from './FilmsItem'
 import {getMoviesSearched} from '../API/TMDBApi'
+import {connect} from 'react-redux'
 
 
 class Search extends React.Component{     
@@ -79,11 +80,14 @@ class Search extends React.Component{
                 <Button title='Rechercher' onPress={() => this._searchMovies()}/>
                 <FlatList
                     data={this.state.films}
+                    extraData={this.props.favoritesFilm}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) => <FilmItem 
-                        movie={item}
-                        displayDetailForFilm = {this._displayDetailForFilm}
-                    />}
+                    renderItem={({item}) => 
+                        <FilmItem 
+                            movie={item}
+                            isFilmFavorite={(this.props.favoritesFilm.findIndex(movie=>movie.id===item.id)!== -1)? true :false}
+                            displayDetailForFilm = {this._displayDetailForFilm}
+                        />}
                     onEndReachedThreshold={0.5}
                     onEndReached={()=>{
                         if(this.currentPage<this.totalPages){
@@ -96,5 +100,10 @@ class Search extends React.Component{
         )
     }
 }
+const mapStateToProps=state=>{
+    return{
+        favoritesFilm:state.favoritesFilm
+    }
+}
 
-export default Search
+export default connect(mapStateToProps)(Search)

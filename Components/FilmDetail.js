@@ -1,9 +1,11 @@
 import React from 'react'
-import {Stylesheet,View,Text,ActivityIndicator,ScrollView,Image} from 'react-native'
+import {Stylesheet,View,Text,ActivityIndicator,ScrollView,Image, Button,TouchableOpacity} from 'react-native'
 import styles from './styles'
 import {getMovieDetail, getImageFromApi} from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
+import {connect} from 'react-redux'
+
 
 
 class FilmDetail extends React.Component{
@@ -14,6 +16,8 @@ class FilmDetail extends React.Component{
             isLoading:true
         }
     }
+
+    // mettre une naimation pendant le chargement
     _displayLoading(){
         if(this.state.isLoading){
             return(
@@ -23,6 +27,30 @@ class FilmDetail extends React.Component{
             )
         }
     }
+
+    //choisis quel coeur rendre
+    _displayFavoriteImage(){
+        var sourceImage= require('../Images/borderHeart.png')
+
+        if(this.props.favoritesFilm.findIndex(item=>item.id===this.state.film.id)!== -1){
+            sourceImage= require('../Images/fullHeart.png')
+        }
+        return(
+            <Image
+                style={styles.favorite_image}
+                source={sourceImage}
+            />
+        )
+    }
+
+    //affiche en console log le tableau updaté des filmfavoris
+    componentDidUpdate(){
+
+        console.log('componentDidUpdate: ')
+        console.log(this.props.favoritesFilm)
+    }
+
+    //permet de savoir si c'est en train de charger et récupérer les props à afficher
     componentDidMount(){
         getMovieDetail(this.props.route.params.idFilm).then(
             data=>{
@@ -33,6 +61,15 @@ class FilmDetail extends React.Component{
             }
         )
     }
+    
+    //toggle la liste des favoris
+    _toggleFavorite(){
+
+        const action={ type:"TOGGLE_FAVORITE",value:this.state.film}
+        this.props.dispatch(action)
+    }
+
+    //affiche la composition de la vue du film
     _displayFilm(){
         const {film}=this.state
         if(this.state.film !=undefined){
@@ -43,6 +80,11 @@ class FilmDetail extends React.Component{
                         source={{uri: getImageFromApi(film.backdrop_path)}}
                     />
                     <Text style={styles.title_text_detail}>{film.title}</Text>
+                    <TouchableOpacity
+                        style={styles.favorite_container}
+                        onPress={() =>this._toggleFavorite()}>
+                            {this._displayFavoriteImage()}
+                    </TouchableOpacity>
                     <Text style={styles.description_text_detail}>{film.overview}</Text>
                     <Text style={styles.default_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
                     <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
@@ -60,7 +102,9 @@ class FilmDetail extends React.Component{
             )
         }
     }
+
     render(){
+        //console.log(this.props)
         return(
             <View style={styles.main_container}>
                 {this._displayLoading()}
@@ -70,4 +114,9 @@ class FilmDetail extends React.Component{
     }
 
 }
-export default FilmDetail
+const mapStateToProps= (state)=>{
+    return {
+        favoritesFilm:state.favoritesFilm
+    }
+}
+export default connect(mapStateToProps)(FilmDetail)
